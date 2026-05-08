@@ -2,11 +2,31 @@
 
 Сайт магазина авторского вина "Новое русское вино".
 
-## Запуск
+## Установка
+#### Скопировать репозиторий
+```
+git clone https://github.com/sylaar/elite_wine.git
+cd elite_wine
+```
 
-- Скачайте код
-- Запустите сайт командой `python3 main.py`
-- Перейдите на сайт по адресу [http://127.0.0.1:8000](http://127.0.0.1:8000).
+#### Создать виртуальное окружение
+```
+python -m venv venv
+source venv/bin/activate  # Для Linux/Mac
+venv\Scripts\activate  # Для Windows
+```
+#### Установить зависимости  
+```
+pip install requirements.txt
+```
+
+#### Запустить сайт  
+```
+python3 main.py
+```
+
+#### Перейти на сайт
+[http://127.0.0.1:8000](http://127.0.0.1:8000).
 
 ## Цели проекта
 
