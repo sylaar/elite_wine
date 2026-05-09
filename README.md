@@ -18,7 +18,7 @@ venv\Scripts\activate  # Для Windows
 ```
 #### Установить зависимости  
 ```
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 #### Переменные окружения
 Создать `.env` файл с переменной
