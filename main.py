@@ -1,51 +1,59 @@
 from collections import defaultdict
 import pandas as pd
 from datetime import datetime
+from dotenv import load_dotenv
+import os
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-env = Environment(
-    loader=FileSystemLoader('/path/to/work/dir/'),
-    autoescape=select_autoescape(['html', 'xml'])
-)
 
-template = env.get_template('template.html')
-YEAR_OF_FOUNDATION = 1920
+def main():
+    load_dotenv()
+    env = Environment(
+        loader=FileSystemLoader(os.path.dirname(os.path.abspath(__file__))),
+        autoescape=select_autoescape(['html', 'xml'])
+    )
+
+    template = env.get_template('template.html')
+    COMPANY_FOUNDATION_YEAR = 1920
 
 
-def generate_correct_year_form(num):
-    if (4 < num) and (num < 21):
+    def generate_correct_year_form(num):
+        if (4 < num) and (num < 21):
+            return 'лет'
+        if (num % 10) == 1:
+            return 'год'
+        if (1 < (num % 10)) and ((num % 10) < 5):
+            return 'года'
         return 'лет'
-    if (num % 10) == 1:
-        return 'год'
-    if (1 < (num % 10)) and ((num % 10) < 5):
-        return 'года'
-    return 'лет'
 
 
-excel_data_df = pd.read_excel(
-    'wine3.xlsx',
-    keep_default_na=False,
-    na_values='dummy',
-    ).to_dict(orient='records')
+    excel_data_df = pd.read_excel(
+        os.environ['EXCEL_FILE'],
+        keep_default_na=False,
+        na_values='dummy',
+        ).to_dict(orient='records')
 
-dict_of_lists = defaultdict(list)
+    group_by_category_products = defaultdict(list)
 
-for item in excel_data_df:
-    category = item.get('Категория')
-    dict_of_lists[category].append(item)
+    for item in excel_data_df:
+        category = item.get('Категория')
+        group_by_category_products[category].append(item)
 
-formatted_year = datetime.now().year - YEAR_OF_FOUNDATION
+    company_age = datetime.now().year - COMPANY_FOUNDATION_YEAR
 
-rendered_page = template.render(
-    age_of_the_company=formatted_year,
-    year_form=generate_correct_year_form(formatted_year),
-    data_from_excel=dict_of_lists,
-)
+    rendered_page = template.render(
+        company_age=company_age,
+        correct_year_form=generate_correct_year_form(company_age),
+        data_from_excel=group_by_category_products,
+    )
 
-with open('index.html', 'w', encoding="utf8") as file:
-    file.write(rendered_page)
+    with open('index.html', 'w', encoding="utf8") as file:
+        file.write(rendered_page)
 
-server = HTTPServer(('0.0.0.0', 8000), SimpleHTTPRequestHandler)
-server.serve_forever()
+    server = HTTPServer(('0.0.0.0', 8000), SimpleHTTPRequestHandler)
+    server.serve_forever()
+
+if __name__ == '__main__':
+    main()
