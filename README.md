@@ -12,7 +12,7 @@ cd elite_wine
 
 #### Создать виртуальное окружение
 ```
-python -m venv venv
+python3 -m venv venv
 source venv/bin/activate  # Для Linux/Mac
 venv\Scripts\activate  # Для Windows
 ```
