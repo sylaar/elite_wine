@@ -8,18 +8,8 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 
-def main():
-    load_dotenv()
-    env = Environment(
-        loader=FileSystemLoader(os.path.dirname(os.path.abspath(__file__))),
-        autoescape=select_autoescape(['html', 'xml'])
-    )
 
-    template = env.get_template('template.html')
-    COMPANY_FOUNDATION_YEAR = 1920
-
-
-    def generate_correct_year_form(num):
+def generate_correct_year_form(num):
         if (4 < num) and (num < 21):
             return 'лет'
         if (num % 10) == 1:
@@ -28,6 +18,16 @@ def main():
             return 'года'
         return 'лет'
 
+
+def main():
+    load_dotenv()
+    env = Environment(
+        loader=FileSystemLoader(os.path.dirname(os.path.abspath(__file__))),
+        autoescape=select_autoescape(['html', 'xml'])
+    )
+
+    template = env.get_template('template.html')
+    company_foundation_year = 1920
 
     excel_data_df = pd.read_excel(
         os.environ['EXCEL_FILE'],
@@ -41,7 +41,7 @@ def main():
         category = item.get('Категория')
         group_by_category_products[category].append(item)
 
-    company_age = datetime.now().year - COMPANY_FOUNDATION_YEAR
+    company_age = datetime.now().year - company_foundation_year
 
     rendered_page = template.render(
         company_age=company_age,
